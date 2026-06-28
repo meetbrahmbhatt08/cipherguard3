@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CipherGuard - Cybersecurity Platform</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand"><span class="brand-dot"></span> CipherGuard</div>
+  <div class="nav-links">
+    <button class="nav-btn active" onclick="showPage('home',this)">🏠 Home</button>
+    <button class="nav-btn" onclick="showPage('crypto',this)">🔒 Visual Crypto</button>
+    <button class="nav-btn" onclick="showPage('ransom',this)">🛡️ Ransomware</button>
+    <button class="nav-btn" onclick="showPage('dash',this)">📊 Dashboard</button>
+  </div>
+</nav>
+
+<!-- ========== HOME PAGE ========== -->
+<div id="page-home" class="page active">
+  <div class="hero">
+    <div class="hero-tag">🛡️ Cybersecurity Toolkit</div>
+    <h1>Protect what <span>matters most</span></h1>
+    <p>Two powerful security tools in one place. Split image secrets with Visual Cryptography and detect ransomware threats before they spread.</p>
+    <div class="hero-cards">
+      <div class="hero-card" onclick="showPage('crypto', document.querySelectorAll('.nav-btn')[1])">
+        <div class="hero-card-icon green">🖼️</div>
+        <h3>Visual Cryptography</h3>
+        <p>Split an image into multiple encrypted shares. No single share reveals the secret — only together do they reconstruct the original image.</p>
+        <span class="badge badge-green">Try it →</span>
+      </div>
+      <div class="hero-card" onclick="showPage('ransom', document.querySelectorAll('.nav-btn')[2])">
+        <div class="hero-card-icon purple">🦠</div>
+        <h3>Ransomware Detection</h3>
+        <p>Upload any file and scan it for ransomware indicators including suspicious extensions, high entropy, known signatures, and more.</p>
+        <span class="badge badge-purple">Scan now →</span>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <div class="section-header">
+    <div class="eyebrow">HOW IT WORKS</div>
+    <h2>Two modules, one mission</h2>
+  </div>
+
+  <div class="how-grid">
+    <div class="card">
+      <p class="eyebrow">Visual Cryptography</p>
+      <div class="steps">
+        <div class="step"><span class="step-num">1</span> Upload a secret image</div>
+        <div class="step"><span class="step-num">2</span> Choose number of shares (2, 3, or 4)</div>
+        <div class="step"><span class="step-num">3</span> Download individual encrypted shares</div>
+        <div class="step"><span class="step-num">4</span> Reconstruct by combining all shares</div>
+      </div>
+    </div>
+    <div class="card">
+      <p class="eyebrow">Ransomware Detection</p>
+      <div class="steps">
+        <div class="step"><span class="step-num">1</span> Upload any file for analysis</div>
+        <div class="step"><span class="step-num">2</span> Entropy and extension checks run</div>
+        <div class="step"><span class="step-num">3</span> Signature database scanned</div>
+        <div class="step"><span class="step-num">4</span> Risk score and recommendations shown</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="notice info">
+    ℹ️ All processing happens entirely in your browser. No files are ever uploaded to a server — your data stays 100% private.
+  </div>
+</div>
+
+<!-- ========== VISUAL CRYPTOGRAPHY PAGE ========== -->
+<div id="page-crypto" class="page">
+  <div class="section-header">
+    <div class="eyebrow">VISUAL CRYPTOGRAPHY SYSTEM</div>
+    <h2>Split &amp; Reconstruct Secrets</h2>
+    <p>Encode an image into multiple random-looking shares. Each share alone reveals nothing — combine all shares to reveal the original.</p>
+  </div>
+
+  <div class="tab-row">
+    <button class="tab active" onclick="switchTab('vc','split',this)">✂️ Generate Shares</button>
+    <button class="tab" onclick="switchTab('vc','combine',this)">🔗 Reconstruct Image</button>
+  </div>
+
+  <!-- SPLIT TAB -->
+  <div id="vc-split" class="tab-panel active">
+    <div class="card">
+      <label>Upload Secret Image</label>
+      <div class="upload-zone" id="vc-drop"
+           onclick="document.getElementById('vc-input').click()"
+           ondragover="handleDrag(event,this)"
+           ondragleave="this.classList.remove('drag-over')"
+           ondrop="handleVCDrop(event)">
+        <input type="file" id="vc-input" accept="image/*" onchange="loadVCImage(event)" />
+        <div class="upload-icon">📤</div>
+        <p>Click or drag an image here</p>
+        <span>PNG, JPG, GIF supported</span>
+      </div>
+      <div id="vc-preview-wrap" style="display:none; margin-top:1rem;">
+        <p class="eyebrow">Original Image Preview</p>
+        <canvas id="vc-orig-canvas" style="max-width:100%; border-radius:8px; margin-top:6px; display:block;"></canvas>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="row">
+        <div class="form-group">
+          <label for="vc-shares">Number of Shares</label>
+          <select id="vc-shares">
+            <option value="2">2-out-of-2 (both required)</option>
+            <option value="3">3-out-of-3 (all three required)</option>
+            <option value="4">4-out-of-4 (all four required)</option>
+          </select>
+        </div>
+        <div class="form-btn">
+          <button class="btn btn-primary" onclick="generateShares()" id="gen-btn" disabled>
+            🪄 Generate Shares
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="vc-shares-wrap" style="display:none;">
+      <div class="section-header">
+        <h3>Generated Shares</h3>
+        <p>Each share appears as random noise. Together they reconstruct the original image.</p>
+      </div>
+      <div id="vc-shares-grid" class="shares-grid"></div>
+      <div class="notice success">
+        ✅ Shares generated! Download each one and distribute securely. Use the <strong>Reconstruct</strong> tab to combine them.
+      </div>
+    </div>
+  </div>
+
+  <!-- COMBINE TAB -->
+  <div id="vc-combine" class="tab-panel">
+    <div class="card">
+      <label>Upload Share Files to Reconstruct</label>
+      <div class="upload-zone" onclick="document.getElementById('vc-combine-input').click()">
+        <input type="file" id="vc-combine-input" accept="image/*" multiple onchange="loadSharesForCombine(event)" />
+        <div class="upload-icon">🖼️</div>
+        <p>Click to select share files</p>
+        <span>Select all the share PNG files you downloaded</span>
+      </div>
+      <div id="comb-preview" style="display:none; margin-top:1rem;">
+        <p class="eyebrow">Loaded Shares</p>
+        <div id="comb-thumbs" style="display:flex; gap:8px; flex-wrap:wrap; margin-top:6px;"></div>
+      </div>
+    </div>
+    <div id="comb-result-wrap" class="card" style="display:none;">
+      <p class="eyebrow">Reconstructed Image</p>
+      <canvas id="comb-result-canvas" style="max-width:100%; border-radius:8px; display:block; margin-top:8px;"></canvas>
+      <div class="notice success" style="margin-top:1rem;">
+        ✅ Image successfully reconstructed from your shares!
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== RANSOMWARE DETECTION PAGE ========== -->
+<div id="page-ransom" class="page">
+  <div class="section-header">
+    <div class="eyebrow">RANSOMWARE DETECTION ENGINE</div>
+    <h2>Scan Files for Threats</h2>
+    <p>Upload any file and get an instant analysis: entropy, extension, signatures, and executable headers — all checked in your browser.</p>
+  </div>
+
+  <div class="card">
+    <label>Upload File for Analysis</label>
+    <div class="upload-zone" id="rd-drop"
+         onclick="document.getElementById('rd-input').click()"
+         ondragover="handleDrag(event,this)"
+         ondragleave="this.classList.remove('drag-over')"
+         ondrop="handleRDDrop(event)">
+      <input type="file" id="rd-input" onchange="analyzeFile(event)" />
+      <div class="upload-icon">🔍</div>
+      <p>Click or drag any file here</p>
+      <span>All file types supported — analysis runs entirely in your browser</span>
+    </div>
+  </div>
+
+  <div id="rd-loading" class="card" style="display:none;">
+    <div class="loading-row">
+      <div class="spinner"></div>
+      <span>Scanning file for threats...</span>
+    </div>
+  </div>
+
+  <div id="rd-results" style="display:none;">
+
+    <!-- Risk Score Card -->
+    <div class="card">
+      <div class="score-header">
+        <div>
+          <p class="eyebrow">Overall Risk Score</p>
+          <div class="score-display">
+            <span id="rd-score-num" class="score-number"></span>
+            <span class="score-max">/ 100</span>
+          </div>
+        </div>
+        <div id="rd-score-badge"></div>
+      </div>
+      <div class="risk-meter"><div id="rd-fill" class="risk-fill"></div></div>
+      <p id="rd-summary" class="score-summary"></p>
+    </div>
+
+    <!-- File Details Card -->
+    <div class="card">
+      <p class="eyebrow">File Details</p>
+      <div id="rd-meta" class="meta-grid"></div>
+    </div>
+
+    <!-- Analysis Findings Card -->
+    <div class="card">
+      <p class="eyebrow">Analysis Findings</p>
+      <div id="rd-findings"></div>
+    </div>
+
+    <!-- Recommendations Card -->
+    <div class="card">
+      <p class="eyebrow">Recommendations</p>
+      <div id="rd-recs-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== DASHBOARD PAGE ========== -->
+<div id="page-dash" class="page">
+  <div class="section-header">
+    <div class="eyebrow">DASHBOARD</div>
+    <h2>Activity Overview</h2>
+    <p>Your session history, scan statistics, and cryptography sessions.</p>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-label">Total Scans</div>
+      <div class="stat-val" id="d-scans">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Threats Found</div>
+      <div class="stat-val red" id="d-threats">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Shares Created</div>
+      <div class="stat-val blue" id="d-shares">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Clean Files</div>
+      <div class="stat-val green" id="d-clean">0</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <p class="eyebrow">Scan History</p>
+    <div id="dash-empty" class="empty-state">
+      No scans yet.
+      <span class="link-btn" onclick="showPage('ransom', document.querySelectorAll('.nav-btn')[2])">Run your first scan →</span>
+    </div>
+    <div id="dash-table-wrap" style="display:none; overflow-x:auto;">
+      <table class="hist-table">
+        <thead>
+          <tr><th>File Name</th><th>Type</th><th>Size</th><th>Risk Level</th><th>Score</th><th>Time</th></tr>
+        </thead>
+        <tbody id="dash-rows"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <p class="eyebrow">Visual Cryptography Sessions</p>
+    <div id="vc-dash-empty" class="empty-state">
+      No sessions yet.
+      <span class="link-btn" onclick="showPage('crypto', document.querySelectorAll('.nav-btn')[1])">Generate your first shares →</span>
+    </div>
+    <div id="vc-dash-list"></div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
